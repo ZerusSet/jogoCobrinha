@@ -1,0 +1,40 @@
+body, html{
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    position: absolute;
+}
+
+#cabecalho{
+    margin: 80px;
+    text-align: center;
+}
+
+#mapa{
+    margin-top: 10px;
+    width: 600px;
+    height: 600px;
+    border: 1px solid black;
+    position: relative;
+}
+
+.slime{
+    width: 10px;
+    height: 10px;
+    background-color: green;
+    position: absolute;
+}
+
+.maca{
+    width: 10px;
+    height: 10px;
+    background-color: red;
+    position: absolute;
+    z-index: -111;
+}
