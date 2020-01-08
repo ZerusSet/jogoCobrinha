@@ -17,48 +17,64 @@ var tipoOvo=0;
 var comecar=false;
 var grandeTamanho = 20;
 var macas;
+var comeco=false;
+var radiacao=0;
+var botao="unset";
 $(window).ready(iniciaJogo);
 
+
+
 function inicio(){
-    var slime = $("<img/>", {
-        src: "assets/slimeVerde.png",
-        class:"slime",
-        id:"slime"+numeroSlime
-    });
-    $("#mapa").append(slime);
-    
-    while(pontoInicialTop<50 || pontoInicialTop> 200){
-        pontoInicialTop = Math.floor(Math.random() * 25+1)*10;
-    }
-    while(pontoInicialLeft<100 || pontoInicialLeft> 350){
-        pontoInicialLeft = Math.floor(Math.random() * 39+1)*10;
-    }
-    $("#slime"+numeroSlime).css("top", (pontoInicialTop)+"px");
-    $("#slime"+numeroSlime).css("left", (pontoInicialLeft)+"px");
-    adicionaSlime();
-    macaAleatoria();
-    
     $(document).keydown(function(e){
         if(e.which==37 || e.which==38 || e.which==39 || e.which==40){
             if(fim==false)
             direcaoSlime(e);
+            comeco=true;
         }
     });
     animacao = setInterval(movimento, velocidadeTempo);
 }
 
 function iniciaJogo(){
+    $("#regras").click(function(){
+        $("#modal").slideToggle("slow");
+        if(botao=="none")
+        botao="unset";
+        if(botao=="unset")
+        botao="none";
+        $(".inicio").css("display", botao);
+    });
     var telaInicial = $("<div></div>", {
         class:"inicio"
     });
     $("#mapa").append(telaInicial);
-    $(".inicio").html("<h2>Pressione qualquer tecla para iniciar o jogo</h2>");
+    $(".inicio").html("<h2>Pressione a tecla ENTER para iniciar o jogo</h2>");
     $(document).keyup(function(e){
-        if(comecar==false){
+        if(comecar==false && e.which==13){
             $(".inicio").remove();
             comecar=true;
+            var slime = $("<img/>", {
+                src: "assets/slimeVerde.png",
+                class:"slime",
+                id:"slime"+numeroSlime
+            });
+            $("#mapa").append(slime);
+            
+            while(pontoInicialTop<50 || pontoInicialTop> 200){
+                pontoInicialTop = Math.floor(Math.random() * 25+1)*10;
+            }
+            while(pontoInicialLeft<100 || pontoInicialLeft> 350){
+                pontoInicialLeft = Math.floor(Math.random() * 39+1)*10;
+            }
+            $("#slime"+numeroSlime).css("top", (pontoInicialTop)+"px");
+            $("#slime"+numeroSlime).css("left", (pontoInicialLeft)+"px");
+            $("#slime"+numeroSlime).css("-webkit-filter", "invert(100%)");
+            $("#slime"+numeroSlime).css("filter", "invert(100%)");
+            adicionaSlime();
+            macaAleatoria();
             inicio();
-            direcaoSlime(e);
+            
+            
         }
     });
 }
@@ -87,8 +103,27 @@ async function acabaJogo(tipo){
             i=numeroSlime;
             while(i>=1){
                 $("#slime"+i).remove();
+                if(grandeTamanho<120)
                 grandeTamanho += 4;
+                if(direcao==0){
+                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-1));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                }
+                if(direcao==1){
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                }
+                if(direcao==2){
+                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-2));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                }
+                if(direcao==3){
+                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-2));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                }
                 $(".slimeGrande").css("width", (grandeTamanho+"px"));
+                $(".slimeGrande").css("-webkit-filter", "invert("+radiacao+"%)");
+                $(".slimeGrande").css("filter", "invert("+radiacao+"%)");
+                radiacao+=10;
                 if(i>=1){
                     i--;
                 }
@@ -100,7 +135,7 @@ async function acabaJogo(tipo){
                 if(i<=numeroSlime){
                     i++;
                 }
-            }, 100);
+            }, 50);
             await sleep(100*numeroSlime+300);
             clearInterval(x);
         }
@@ -166,6 +201,7 @@ function ovoAleatorio(){
 }
 
 function movimento(){
+    if(comeco==true)
     movimentoAutomatico();
 }
 
@@ -367,40 +403,24 @@ function adicionaSlime(){
     numeroSlime += 1;
     $("#mapa").append(slimeAleatorio());
     if(direcao==0){
-        $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top-20)+"px");
+        $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top-10)+"px");
         $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left)+"px");
-        for(var i=0; i<numeroSlime; i++){
-            if($("#slime"+(numeroSlime-1)).position().top-20==$("#slime"+(i)).position().top){
-                $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top+20)+"px");
-            }
-        }
+        
     }
     if(direcao==1){
-        $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top+20)+"px");
+        $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top+10)+"px");
         $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left)+"px");
-        for(var i=0; i<numeroSlime; i++){
-            if($("#slime"+(numeroSlime-1)).position().top+20==$("#slime"+(i)).position().top){
-                $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top-20)+"px");
-            }
-        }
+        
     }
     if(direcao==2){
         $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top)+"px");
-        $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left-20)+"px");
-        for(var i=0; i<numeroSlime; i++){
-            if($("#slime"+(numeroSlime-1)).position().left-20==$("#slime"+(i)).position().left){
-                $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left+20)+"px");
-            }
-        }
+        $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left-10)+"px");
+        
     }
     if(direcao==3){
         $("#slime"+numeroSlime).css("top", ($("#slime"+(numeroSlime-1)).position().top)+"px");
-        $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left+20)+"px");
-        for(var i=0; i<numeroSlime; i++){
-            if($("#slime"+(numeroSlime-1)).position().left+20==$("#slime"+(i)).position().left){
-                $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left-20)+"px");
-            }
-        }
+        $("#slime"+numeroSlime).css("left", ($("#slime"+(numeroSlime-1)).position().left+10)+"px");
+        
     }
 }
 
