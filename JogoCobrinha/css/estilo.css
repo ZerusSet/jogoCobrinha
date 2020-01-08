@@ -3,38 +3,90 @@ body, html{
     margin: 0;
     height: 100%;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: radial-gradient(rgb(101,82,144), rgb(26,0,61), rgb(10,1,59), black);
+    z-index: -11;
+    
 }
 
 .container{
+    height: 100%;
+    width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: center;
     position: absolute;
+    font-family: 'Press Start 2P', cursive;
+    color: rgb(211, 211, 211);
+    
+}
+
+.inicio{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    background-color: rgba(0,0,0,0.8);
+    border: 3px solid black;
+}
+
+#titulo{
+    font-size: 40px;
+}
+
+#pontuacao{
+    font-size: 32px;
 }
 
 #cabecalho{
-    margin: 80px;
     text-align: center;
+    margin: 0 20px 0 20px;
+}
+
+#entornoInterno{
+    width: 460px;
+    height: 520px;
+    background-image: url("../assets/fundo.png");
+    background-size: 460px 420px;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 #mapa{
-    margin-top: 10px;
-    width: 600px;
-    height: 600px;
-    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 400px;
+    height: 260px;
+    top: 20px;
     position: relative;
 }
 
 .slime{
-    width: 10px;
-    height: 10px;
-    background-color: green;
     position: absolute;
+    width: 20px;
+}
+
+.slimeGrande{
+    position: absolute;
+    width: 20px;
 }
 
 .maca{
-    width: 10px;
-    height: 10px;
-    background-color: red;
+    width: 20px;
     position: absolute;
-    z-index: -111;
+}
+
+.final{
+    display: flex;
+    align-items: center;
+    max-width: 90%;
+    max-height: 90%;
+    text-align: center;
+    background-color: rgba(0,0,0,0.9);
+    border: 3px solid black;
+    z-index: 111;
 }
