@@ -20,6 +20,8 @@ var macas;
 var comeco=false;
 var radiacao=0;
 var botao="unset";
+var clicar=0;
+var macaTop, macaLeft;
 $(window).ready(iniciaJogo);
 
 
@@ -36,19 +38,28 @@ function inicio(){
 }
 
 function iniciaJogo(){
-    $("#regras").click(function(){
-        $("#modal").slideToggle("slow");
-        if(botao=="none")
-        botao="unset";
-        if(botao=="unset")
-        botao="none";
-        $(".inicio").css("display", botao);
+    $("#regras").click(async function(){
+        if(clicar==0){
+            $("#enter").slideToggle(400);
+            await sleep(400);
+            $(".inicio").css("display", "none");
+            $("#modal").slideToggle(400);
+            clicar=1;
+        }else
+        if(clicar==1){
+            $("#modal").slideToggle(400);
+            await sleep(400);
+            $(".inicio").css("display", "unset");
+            $("#enter").slideToggle(400);
+            clicar=0;
+        }
     });
+    
     var telaInicial = $("<div></div>", {
         class:"inicio"
     });
     $("#mapa").append(telaInicial);
-    $(".inicio").html("<h2>Pressione a tecla ENTER para iniciar o jogo</h2>");
+    $(".inicio").html("<h2 id='enter'>Pressione a tecla ENTER para iniciar o jogo</h2><h4 id='enter'>Passe perto de um ovo para chocar um slime</h4>");
     $(document).keyup(function(e){
         if(comecar==false && e.which==13){
             $(".inicio").remove();
@@ -73,8 +84,7 @@ function iniciaJogo(){
             adicionaSlime();
             macaAleatoria();
             inicio();
-            
-            
+            clicar =2;
         }
     });
 }
@@ -103,22 +113,21 @@ async function acabaJogo(tipo){
             i=numeroSlime;
             while(i>=1){
                 $("#slime"+i).remove();
-                if(grandeTamanho<120)
                 grandeTamanho += 4;
                 if(direcao==0){
                     $(".slimeGrande").css("top", ($(".slimeGrande").position().top-1));
-                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-1));
                 }
                 if(direcao==1){
-                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-1));
                 }
                 if(direcao==2){
-                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-2));
-                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-1));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-1));
                 }
                 if(direcao==3){
-                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-2));
-                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-2));
+                    $(".slimeGrande").css("top", ($(".slimeGrande").position().top-1));
+                    $(".slimeGrande").css("left", ($(".slimeGrande").position().left-1));
                 }
                 $(".slimeGrande").css("width", (grandeTamanho+"px"));
                 $(".slimeGrande").css("-webkit-filter", "invert("+radiacao+"%)");
@@ -127,7 +136,7 @@ async function acabaJogo(tipo){
                 if(i>=1){
                     i--;
                 }
-                await sleep(200);
+                await sleep(50);
             }
         } else {
             var x = setInterval(() => {
@@ -136,11 +145,11 @@ async function acabaJogo(tipo){
                     i++;
                 }
             }, 50);
-            await sleep(100*numeroSlime+300);
+            await sleep(100*numeroSlime+200);
             clearInterval(x);
         }
         if(i>numeroSlime || i<=1){
-            await sleep(800);
+            
             $("#mapa").append(telaFinal);
             if(tipo==0){
                 $(".final").html("<h3>Você Perdeu! Bateu em uma parede.<br>Aperte qualquer tecla para reiniciar</h3>");
@@ -160,8 +169,10 @@ async function acabaJogo(tipo){
 
 function macaAleatoria(){
     $("#mapa").append(ovoAleatorio());
-    $(".maca").css("top", (Math.floor(Math.random() * 23+1)*10)+"px");
-    $(".maca").css("left", (Math.floor(Math.random() * 38+1)*10)+"px");
+    macaTop = Math.floor(Math.random() * 23+1)*10;
+    macaLeft = Math.floor(Math.random() * 38+1)*10;
+    $(".maca").css("top", (macaTop)+"px");
+    $(".maca").css("left", (macaLeft)+"px");
 }
 
 function ovoAleatorio(){
@@ -285,9 +296,6 @@ function checaParede(){
 }
 
 function checaMaca(){
-    //((($(".maca").position().top-10)<=($("#slime0").position().top)<=($(".maca").position().top+10)
-    //&&($(".maca").position().left-10)<=($("#slime0").position().left)<=($(".maca").position().left+10)))
-
     if((($("#slime0").position().top)==($(".maca").position().top)) &&
     (($("#slime0").position().left)==($(".maca").position().left)) ||
     (($("#slime0").position().top)==($(".maca").position().top-10)) &&
@@ -303,11 +311,11 @@ function checaMaca(){
         macaAleatoria();
         pontuacao += 1;
         $("#pontuacao").html("Pontuação: " + pontuacao );
-        if(pontuacao%5==0 && velocidadeTempo>50){
+        if(pontuacao%5==0 && velocidadeTempo>30){
             velocidadeTempo -= 10;
             clearInterval(animacao);
             animacao = setInterval(movimento, velocidadeTempo);
-            console.log(velocidadeTempo);
+            
         }
     }
 }
@@ -333,69 +341,34 @@ function slimeAleatorio(){
         }
     }
     if(tipoOvo==1){
-        var slime2 = Math.floor(Math.random() * 3);
-        if(slime2==1||slime2==0){
+        
             var slime = $("<img/>", {
                 src: "assets/slimeAzul.png",
                 class:"slime",
                 id:"slime"+numeroSlime
             });
             return slime;
-        }
-        if(slime2==2){
-            var slime = $("<img/>", {
-                src: "assets/slimeAmarelo.png",
-                class:"slime",
-                id:"slime"+numeroSlime
-            });
-            return slime;
-        }
+        
     }
     if(tipoOvo==2){
-        var slime3 = Math.floor(Math.random() * 3);
-        if(slime3==1||slime3==0){
+        
             var slime = $("<img/>", {
                 src: "assets/slimeVermelho.png",
                 class:"slime",
                 id:"slime"+numeroSlime
             });
             return slime;
-        }
-        if(slime3==2){
-            var slime = $("<img/>", {
-                src: "assets/slimePreto.png",
-                class:"slime",
-                id:"slime"+numeroSlime
-            });
-            return slime;
-        }
+        
     }
     if(tipoOvo==3){
-        var slime4 = Math.floor(Math.random() * 4);
-        if(slime4==1||slime4==0){
+        
             var slime = $("<img/>", {
                 src: "assets/slimeRoxo.png",
                 class:"slime",
                 id:"slime"+numeroSlime
             });
             return slime;
-        }
-        if(slime4==2){
-            var slime = $("<img/>", {
-                src: "assets/slimeCinza.png",
-                class:"slime",
-                id:"slime"+numeroSlime
-            });
-            return slime;
-        }
-        if(slime4==3){
-            var slime = $("<img/>", {
-                src: "assets/slimeMarrom.png",
-                class:"slime",
-                id:"slime"+numeroSlime
-            });
-            return slime;
-        }
+        
     }
 }
 
@@ -431,7 +404,7 @@ function direcaoSlime(e){
             movimento();
         }
         if(direcao==1 && pontuacao>2){
-            $("#mapa").css("border-color", "red");
+            
             clearInterval(animacao);
             acabaJogo(2);
         }
@@ -442,7 +415,7 @@ function direcaoSlime(e){
             movimento();
         }
         if(direcao==0 && pontuacao>2){
-            $("#mapa").css("border-color", "red");
+            
             clearInterval(animacao);
             acabaJogo(2);
         }
@@ -455,7 +428,7 @@ function direcaoSlime(e){
             
         }
         if(direcao==3 && pontuacao>2){
-            $("#mapa").css("border-color", "red");
+            
             clearInterval(animacao);
             acabaJogo(2);
         }
@@ -466,7 +439,7 @@ function direcaoSlime(e){
             movimento();
         }
         if(direcao==2 && pontuacao>2){
-            $("#mapa").css("border-color", "red");
+            
             clearInterval(animacao);
             acabaJogo(2);
         }
